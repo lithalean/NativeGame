@@ -25,7 +25,9 @@ struct NativeGameApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            MainGameView()
+                .preferredColorScheme(.dark) // Gaming apps typically use dark mode
+                .statusBarHidden() // Hide status bar for immersive gaming
         }
         .modelContainer(sharedModelContainer)
     }

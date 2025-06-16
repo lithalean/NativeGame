@@ -5,14 +5,6 @@
 //  Created by Tyler Allen on 6/16/25.
 //
 
-
-//
-//  PCKManager.swift
-//  HybridApp
-//
-//  Created by Tyler Allen on 6/11/25.
-//
-
 import Foundation
 
 @MainActor

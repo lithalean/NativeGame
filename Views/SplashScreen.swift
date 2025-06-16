@@ -6,144 +6,148 @@
 //
 
 
+//
+//  SplashScreen.swift
+//  NativeGame
+//
+//  Created by Tyler Allen on 6/16/25.
+//
+
 import SwiftUI
 
-// Add this to your Views folder
 struct SplashScreen: View {
-    @State private var isAnimating = false
-    @State private var titleOpacity: Double = 0.0
-    @State private var backgroundOpacity: Double = 0.0
     @Binding var showSplash: Bool
+    var onComplete: (() -> Void)? = nil
     
-    let splashDuration: Double = 2.5
+    @State private var logoScale: CGFloat = 0.5
+    @State private var logoOpacity: Double = 0.0
+    @State private var showingTitle: Bool = false
+    @State private var showingSubtitle: Bool = false
     
     var body: some View {
         ZStack {
-            // Background
-            Color.black
-                .opacity(backgroundOpacity)
-                .ignoresSafeArea()
+            // Premium gaming background
+            LinearGradient(
+                colors: [.black, .blue.opacity(0.4), .purple.opacity(0.3)],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .ignoresSafeArea()
             
-            // Animated particles
-            ForEach(0..<15, id: \.self) { index in
-                Circle()
-                    .fill(Color.white.opacity(0.1))
-                    .frame(width: CGFloat.random(in: 2...6))
-                    .position(
-                        x: CGFloat.random(in: 0...UIScreen.main.bounds.width),
-                        y: CGFloat.random(in: 0...UIScreen.main.bounds.height)
-                    )
-                    .opacity(isAnimating ? 0.6 : 0.0)
-                    .scaleEffect(isAnimating ? 1.2 : 0.5)
-                    .animation(
-                        Animation.easeInOut(duration: Double.random(in: 2...4))
-                            .repeatForever(autoreverses: true)
-                            .delay(Double.random(in: 0...1)),
-                        value: isAnimating
-                    )
-            }
-            
-            // Main content centered
-            VStack {
+            VStack(spacing: 20) {
                 Spacer()
                 
-                // App name/title - centered on screen
-                Text("Godot")
-                    .font(.system(size: 64, weight: .bold, design: .rounded))
+                // Game logo/icon
+                Image(systemName: "gamecontroller.fill")
+                    .font(.system(size: 80, weight: .light))
                     .foregroundStyle(
                         LinearGradient(
-                            gradient: Gradient(colors: [Color.white, Color.blue.opacity(0.8)]),
-                            startPoint: .leading,
-                            endPoint: .trailing
+                            colors: [.white, .blue.opacity(0.8)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
                         )
                     )
-                    .opacity(titleOpacity)
-                    .overlay(
-                        // Lighthouse light effect
-                        Rectangle()
-                            .fill(
+                    .scaleEffect(logoScale)
+                    .opacity(logoOpacity)
+                    .shadow(color: .blue.opacity(0.5), radius: 20)
+                
+                // Game title
+                if showingTitle {
+                    VStack(spacing: 8) {
+                        Text("NativeGame")
+                            .font(.system(size: 36, weight: .bold, design: .rounded))
+                            .foregroundStyle(
                                 LinearGradient(
-                                    gradient: Gradient(colors: [
-                                        Color.white.opacity(0.6),
-                                        Color.clear,
-                                        Color.white.opacity(0.6)
-                                    ]),
-                                    startPoint: .leading,
-                                    endPoint: .trailing
+                                    colors: [.white, .blue.opacity(0.9)],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
                                 )
                             )
-                            .frame(width: 300, height: 100)
-                            .blur(radius: 20)
-                            .opacity(isAnimating ? 0.8 : 0.0)
-                            .animation(
-                                Animation.easeInOut(duration: 2.0)
-                                    .repeatForever(autoreverses: true),
-                                value: isAnimating
-                            )
-                            .mask(
-                                Text("Godot")
-                                    .font(.system(size: 64, weight: .bold, design: .rounded))
-                            )
-                    )
+                        
+                        if showingSubtitle {
+                            Text("Ultimate Darwin ARM64 Gaming")
+                                .font(.system(size: 16, weight: .medium))
+                                .foregroundColor(.white.opacity(0.8))
+                        }
+                    }
+                    .transition(.opacity.combined(with: .move(edge: .bottom)))
+                }
                 
                 Spacer()
-            }
-            
-            // Loading dots - positioned at bottom with Mac dock padding
-            VStack {
-                Spacer()
-                HStack(spacing: 12) {
-                    ForEach(0..<3) { index in
-                        Circle()
-                            .fill(Color.white.opacity(0.8))
-                            .frame(width: 10, height: 10)
-                            .scaleEffect(isAnimating ? 1.2 : 0.8)
-                            .opacity(isAnimating ? 1.0 : 0.5)
-                            .animation(
-                                Animation.easeInOut(duration: 0.8)
-                                    .repeatForever()
-                                    .delay(Double(index) * 0.2),
-                                value: isAnimating
-                            )
+                
+                // Loading indicator
+                if showingSubtitle {
+                    HStack(spacing: 12) {
+                        ProgressView()
+                            .scaleEffect(0.8)
+                            .tint(.white.opacity(0.7))
+                        
+                        Text("Loading Gaming Engine...")
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundColor(.white.opacity(0.7))
                     }
+                    .transition(.opacity)
+                    .padding(.bottom, 40)
                 }
-                .opacity(titleOpacity)
-                .padding(.bottom, 20)
             }
+            .padding()
         }
         .onAppear {
-            startSplashAnimation()
+            startAnimationSequence()
         }
     }
     
-    func startSplashAnimation() {
-        // Background fade in
-        withAnimation(.easeIn(duration: 0.4)) {
-            backgroundOpacity = 1.0
+    // MARK: - Animation Sequence
+    private func startAnimationSequence() {
+        // Logo animation
+        withAnimation(.easeOut(duration: 1.0)) {
+            logoScale = 1.0
+            logoOpacity = 1.0
         }
         
-        // Title fade in
-        withAnimation(.easeOut(duration: 0.8).delay(0.5)) {
-            titleOpacity = 1.0
-        }
-        
-        // Start particle animations
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            isAnimating = true
-        }
-        
-        // Hide splash screen after duration
-        DispatchQueue.main.asyncAfter(deadline: .now() + splashDuration) {
-            withAnimation(.easeOut(duration: 0.5)) {
-                showSplash = false
+        // Title animation
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
+            withAnimation(.easeInOut(duration: 0.8)) {
+                showingTitle = true
             }
         }
+        
+        // Subtitle and loading animation
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.6) {
+            withAnimation(.easeInOut(duration: 0.6)) {
+                showingSubtitle = true
+            }
+        }
+        
+        // Auto-complete after 3 seconds
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+            completeSplash()
+        }
+    }
+    
+    private func completeSplash() {
+        withAnimation(.easeInOut(duration: 0.5)) {
+            showSplash = false
+        }
+        onComplete?()
     }
 }
 
-// Preview
-struct SplashScreen_Previews: PreviewProvider {
-    static var previews: some View {
-        SplashScreen(showSplash: .constant(true))
+// MARK: - Convenience Initializers
+extension SplashScreen {
+    // Simple version with just binding
+    init(showSplash: Binding<Bool>) {
+        self._showSplash = showSplash
+        self.onComplete = nil
     }
+    
+    // Version with completion callback
+    init(showSplash: Binding<Bool>, onComplete: @escaping () -> Void) {
+        self._showSplash = showSplash
+        self.onComplete = onComplete
+    }
+}
+
+#Preview("Splash Screen") {
+    SplashScreen(showSplash: .constant(true))
 }
