@@ -5,14 +5,6 @@
 //  Created by Tyler Allen on 6/16/25.
 //
 
-
-//
-//  SplashScreen.swift
-//  NativeGame
-//
-//  Created by Tyler Allen on 6/16/25.
-//
-
 import SwiftUI
 
 struct SplashScreen: View {
@@ -26,13 +18,8 @@ struct SplashScreen: View {
     
     var body: some View {
         ZStack {
-            // Premium gaming background
-            LinearGradient(
-                colors: [.black, .blue.opacity(0.4), .purple.opacity(0.3)],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .ignoresSafeArea()
+            // Use your SplashBackground from Styles/
+            SplashBackground()
             
             VStack(spacing: 20) {
                 Spacer()

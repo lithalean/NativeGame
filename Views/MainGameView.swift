@@ -35,11 +35,9 @@ struct MainGameView: View {
                     // Use your modular SplashScreen component
                     SplashScreen(showSplash: $showSplash)
                 } else {
-                    // Use your modular TitleScreen component with navigation
-                    TitleScreen(
+                    // Use your modular ModernSlidingTitleScreen component
+                    ModernSlidingTitleScreen(
                         onNewGame: { gameState.navigateToGame() },
-                        onContinue: { gameState.navigateToLoadGame() },
-                        onSettings: { gameState.navigateToSettings() },
                         onCredits: { print("Credits - Coming Soon") }
                     )
                 }
@@ -47,16 +45,16 @@ struct MainGameView: View {
             .navigationDestination(for: GameDestination.self) { destination in
                 switch destination {
                 case .title:
-                    TitleScreen(
+                    ModernSlidingTitleScreen(
                         onNewGame: { gameState.navigateToGame() },
-                        onContinue: { gameState.navigateToLoadGame() },
-                        onSettings: { gameState.navigateToSettings() },
                         onCredits: { print("Credits - Coming Soon") }
                     )
                     
                 case .game:
-                    // Use your actual ContentView component
-                    NavigatingContentView(gameState: gameState)
+                    // Use enhanced game view with WWDC25 menu button
+                    EnhancedGameView(
+                        onBackToMenu: { gameState.navigateBack() }
+                    )
                     
                 case .settings:
                     GameSettingsView(gameState: gameState)
@@ -115,6 +113,13 @@ struct NavigatingContentView: View {
                 
                 // Main game content area - Integration point for your actual ContentView
                 VStack(spacing: 20) {
+                    Text("Game Content")
+                        .font(.system(size: 32, weight: .bold))
+                        .foregroundColor(.white)
+                    
+                    Text("Your ContentView.swift Integration Here")
+                        .font(.system(size: 16, weight: .medium))
+                        .foregroundColor(.white.opacity(0.7))
                     
                     // Placeholder for your actual ContentView or GameEngine view
                     RoundedRectangle(cornerRadius: 12)

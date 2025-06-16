@@ -1,5 +1,5 @@
 //
-//  TitleBackground.swift
+//  SplashBackground.swift
 //  NativeGame
 //
 //  Created by Tyler Allen on 6/16/25.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct TitleBackground: View {
+struct SplashBackground: View {
     var body: some View {
         // Premium gaming background
         LinearGradient(

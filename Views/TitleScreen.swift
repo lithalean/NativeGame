@@ -15,21 +15,19 @@ struct TitleScreen: View {
     var onCredits: (() -> Void)
     
     @State private var titleOpacity: Double = 0.0
-    @State private var buttonsOpacity: Double = 0.0
     @State private var showingButtons: Bool = false
+    @State private var buttonsOpacity: Double = 0.0
     
     var body: some View {
         ZStack {
             // Use your TitleBackground from Styles/
             TitleBackground()
             
-            VStack(spacing: 40) {
-                Spacer()
-                
-                // Game title section
+            VStack(spacing: 0) {
+                // Centered game title section
                 VStack(spacing: 12) {
                     Text("NativeGame")
-                        .font(.system(size: 48, weight: .bold, design: .rounded))
+                        .font(.system(size: 64, weight: .bold, design: .rounded)) // Bigger title
                         .foregroundStyle(
                             LinearGradient(
                                 colors: [.white, .blue.opacity(0.8)],
@@ -41,26 +39,34 @@ struct TitleScreen: View {
                         .opacity(titleOpacity)
                     
                     Text("Ultimate Darwin ARM64 Gaming")
-                        .font(.system(size: 18, weight: .medium))
+                        .font(.system(size: 20, weight: .medium)) // Slightly bigger subtitle
                         .foregroundColor(.white.opacity(0.8))
                         .opacity(titleOpacity)
                 }
+                .frame(maxWidth: .infinity, maxHeight: .infinity) // Center in viewport
                 .onAppear {
-                    withAnimation(.easeOut(duration: 1.0)) {
+                    // Title fade in
+                    withAnimation(.easeIn(duration: 1.0)) {
                         titleOpacity = 1.0
                     }
                     
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                        withAnimation(.easeInOut(duration: 0.8)) {
-                            showingButtons = true
-                            buttonsOpacity = 1.0
+                    // Title fade out and buttons slide in from right
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                        withAnimation(.easeOut(duration: 0.8)) {
+                            titleOpacity = 0.0
+                        }
+                        
+                        // Start button slide-in after title starts fading
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                            withAnimation(.easeOut(duration: 1.0)) {
+                                showingButtons = true
+                                buttonsOpacity = 1.0
+                            }
                         }
                     }
                 }
                 
-                Spacer()
-                
-                // Menu buttons using your TitleButton from Styles/
+                // Centered menu buttons
                 if showingButtons {
                     VStack(spacing: 20) {
                         // Primary action - New Game
@@ -89,14 +95,13 @@ struct TitleScreen: View {
                             action: onCredits
                         )
                     }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity) // Center in viewport
                     .opacity(buttonsOpacity)
-                    .transition(.opacity.combined(with: .move(edge: .bottom)))
+                    .transition(.move(edge: .trailing).combined(with: .opacity))
                     .padding(.horizontal, 40)
                 }
                 
-                Spacer()
-                
-                // Version and build info
+                // Version and build info (always at bottom)
                 VStack(spacing: 4) {
                     Text("Phase 2 - Enhancement Build")
                         .font(.system(size: 12, weight: .medium))
