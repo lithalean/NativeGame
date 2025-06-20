@@ -1,5 +1,5 @@
 # NativeGame
-*The Ultimate Darwin ARM64 Native Gaming Experience - Pure Performance, No Compromises*
+*A Modular Darwin ARM64 Native Gaming Experience - Pure Performance, No Compromises*
 
 ![Platform Support](https://img.shields.io/badge/platform-iOS%20%7C%20iPadOS%20%7C%20macOS-blue)
 ![Swift Version](https://img.shields.io/badge/swift-5.9+-orange)
